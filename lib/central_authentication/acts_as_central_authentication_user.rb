@@ -8,7 +8,7 @@ module ActiveRecord
       module ClassMethods
         def acts_as_central_authentication_user
           include InstanceMethods
-          belongs_to :central_auth_user, :foreign_key => 'central_auth_user_id', :class_name => 'CentralAuth::User'
+          belongs_to :central_authentication_user, :foreign_key => 'central_auth_user_id', :class_name => 'CentralAuthentication::User'
 
           attr_accessor :password_confirmation, :password
 
