@@ -35,7 +35,7 @@ module ActiveRecord
       end
       module InstanceMethods
         def create_cauth_user
-            CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
+          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
         end
 
         def update_cauth_user(cauth_user)
