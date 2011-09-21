@@ -58,7 +58,7 @@ module ActiveRecord
 
         def persistence_token
           # This method returns the persistence_token from the central authentication user. If this user does not exist yet it returns a arbitrary string otherwise it fails validation.
-          return 'a' if central_authentication_user.nil?
+          return Authlogic::Random.hex_token if central_authentication_user.nil?
           central_authentication_user.persistence_token
         end
 
