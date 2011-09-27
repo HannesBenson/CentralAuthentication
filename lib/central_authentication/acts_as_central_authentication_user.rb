@@ -35,7 +35,7 @@ module ActiveRecord
       end
       module InstanceMethods
         def create_cauth_user
-            CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
+          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
         end
 
         def update_cauth_user(cauth_user)
@@ -58,7 +58,7 @@ module ActiveRecord
 
         def persistence_token
           # This method returns the persistence_token from the central authentication user. If this user does not exist yet it returns a arbitrary string otherwise it fails validation.
-          return 'a' if central_authentication_user.nil?
+          return Authlogic::Random.hex_token if central_authentication_user.nil?
           central_authentication_user.persistence_token
         end
 
