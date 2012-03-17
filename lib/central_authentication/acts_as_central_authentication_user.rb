@@ -33,18 +33,22 @@ module ActiveRecord
           validates_confirmation_of :password
 
           before_validation :create_or_set_cauth_user
+
+          def self.find_by_persistence_token(persistence_token)
+            CentralAuthentication::User.find_by_persistence_token(persistence_token)
+          end
         end
       end
       module InstanceMethods
         def create_cauth_user
-          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
+          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
         end
 
         def update_cauth_user(cauth_user)
           if self.password.blank?
             cauth_user.update_attributes(:email => self.email)
           else
-            cauth_user.update_attributes(:password => self.password, :password_confirmation => self.password_confirmation, :email => self.email)
+            cauth_user.update_attributes(:password => self.password, :email => self.email)
           end
         end
 
