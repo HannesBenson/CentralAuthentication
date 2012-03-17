@@ -22,27 +22,33 @@ module ActiveRecord
             config.validate_login_field = false
           end
 
-          validates_presence_of :password
-          validates_presence_of :password_confirmation
+          validates_presence_of :password, :if => Proc.new {|user| user.new_record? && user.central_auth_user_id.nil?}
+          validates_presence_of :password_confirmation, :if => Proc.new {|user| user.new_record? && user.central_auth_user_id.nil?}
           validates_format_of :password, :with => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{9,15}$/,
-                              :message => 'must contain at least one uppercase and one lowercase letter as well as at least one numerical character.'
+                              :message => 'must be between 9 and 15 characters long, contain at least one uppercase and one lowercase letter as well as at least one numerical character.',
+                              :if => Proc.new {|user| (user.password.present? || user.password_confirmation.present?)}
           validates_format_of :password_confirmation, :with => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{9,15}$/,
-                              :message => 'must contain at least one uppercase and one lowercase letter as well as at least one numerical character.'
+                              :message => 'must be between 9 and 15 characters long, contain at least one uppercase and one lowercase letter as well as at least one numerical character.',
+                              :if => Proc.new {|user| (user.password.present? || user.password_confirmation.present?)}
           validates_confirmation_of :password
 
-          before_save :create_or_set_cauth_user
+          before_validation :create_or_set_cauth_user
+
+          def self.find_by_persistence_token(persistence_token)
+            CentralAuthentication::User.find_by_persistence_token(persistence_token)
+          end
         end
       end
       module InstanceMethods
         def create_cauth_user
-          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_confirmation => self.password_confirmation, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
+          CentralAuthentication::User.create(:email => self.email, :password => self.password, :password_expires_on => Date.today + 30.days, :persistence_token => self.persistence_token)
         end
 
         def update_cauth_user(cauth_user)
           if self.password.blank?
             cauth_user.update_attributes(:email => self.email)
           else
-            cauth_user.update_attributes(:password => self.password, :password_confirmation => self.password_confirmation, :email => self.email)
+            cauth_user.update_attributes(:password => self.password, :email => self.email)
           end
         end
 
@@ -52,6 +58,7 @@ module ActiveRecord
             cauth_user = create_cauth_user
             self.central_auth_user_id = cauth_user.id
           else
+            self.central_authentication_user = cauth_user if self.central_auth_user_id.nil?
             update_cauth_user(cauth_user)
           end
         end

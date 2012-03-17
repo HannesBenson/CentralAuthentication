@@ -3,7 +3,7 @@ require 'rails'
 
 module CentralAuthentication
   class Railtie < Rails::Railtie
-    config.after_initialize do
+    initializer "central_authentication.configure_rails_initialization" do
       require 'central_authentication/version'
       require 'central_authentication/connection'
       require 'central_authentication/migration'

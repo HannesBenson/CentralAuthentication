@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = CentralAuthentication::VERSION
   s.authors     = ["Hannes Benson"]
   s.email       = ["hannes@mpowered.co.za"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/HannesBenson/CentralAuthentication"
   s.summary     = %q{Central Authentication using Authlogic}
   s.description = %q{This gem allows you to share a central database and using authlogic stores and retrieves passwords}
 
